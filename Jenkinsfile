@@ -1,5 +1,4 @@
-def usernameVariable = 'mavenuser'
-def passwordVariable = 'm@venp@$$word'
+
 pipeline {
  agent {
         docker {
@@ -68,7 +67,7 @@ pipeline {
              withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
               echo "user ${usernameVariable}"
               echo "password ${passwordVariable}"
-              sh 'curl -v -u ${usernameVariable}:${passwordVariable} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz' 
+              sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz' 
               }
               }
          }
