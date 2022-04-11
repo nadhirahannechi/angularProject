@@ -46,7 +46,7 @@ pipeline {
  stage('Nexus Upload Stage') {
  agent none 
     steps { 
-            sh 'curl -v -u 'mavenuser:m@venp@$$word' --upload-file dist.tar.gz 'http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz'' 
+            sh 'curl -v -u 'mavenuser:m\@venp\@\$\$word' --upload-file dist.tar.gz 'http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz'' 
     }
 }
  
