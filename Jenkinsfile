@@ -5,8 +5,8 @@ pipeline {
        } 
    } 
    environment {
-      URL = "http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz"
-      USER = "mavenuser:m@venp@$$word"
+      URL= "http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz"
+      USER= "mavenuser:m@venp@$$word"
       
    }
    stages { 
