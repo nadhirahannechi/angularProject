@@ -1,14 +1,13 @@
+
+      def URL='http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz'
+      def USER='mavenuser:m@venp@$$word'
 pipeline {
  agent {
         docker {
             image 'trion/ng-cli-karma:1.2.1' 
         }
     }
-        environment {
-      URL='http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz'
-      USER='mavenuser:m@venp@$$word'
-      
-   }
+    
  options {
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
   }
