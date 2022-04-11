@@ -1,6 +1,6 @@
 
       def URL="http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz"
-      def USER="mavenuser:m@venp@$$word"
+      def USER="mavenuser:m@venp@\$\$word"
 pipeline {
  agent {
         docker {
