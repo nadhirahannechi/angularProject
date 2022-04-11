@@ -1,6 +1,4 @@
 
-      def URL="http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz"
-      def USER="mavenuser:m@venp@\$\$word"
 pipeline {
  agent {
         docker {
@@ -65,9 +63,11 @@ pipeline {
         }
         stage('Nexus Upload Stage') {
           agent none 
+              steps {
               withCreadentials([[user: 'mavenuser',password: 'm@venp@$$word']]){
                     sh 'curl -v -u ${user}:${password} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz' 
              }
+              }
          }
  
 
