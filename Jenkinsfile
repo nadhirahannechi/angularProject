@@ -64,7 +64,7 @@ pipeline {
         stage('Nexus Upload Stage') {
           agent none 
               steps {
-              withCredentials([[$class: 'UsernamePasswordMultiBinding',nexusCredentialsId:'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]){
+             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh 'curl -v -u ${usernameVariable}:${passwordVariable} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz' 
              }
               }
