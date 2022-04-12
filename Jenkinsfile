@@ -53,18 +53,17 @@ pipeline {
        stage('deploy') {
  agent none 
     steps { 
-         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nadhira',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
        pushToCloudFoundry(
   target: 'https://api.cf.us10.hana.ondemand.com/',
   organization: '9648b7fatrial',
   cloudSpace: 'dev',
-  credentialsId: 'nadhira',
+  credentialsId: 'tesnim',
   manifestChoice: [manifestFile: './manifest.yml']
 
 )
          }
     
-    }
+    
 }
 
    }
