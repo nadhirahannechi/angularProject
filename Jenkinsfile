@@ -29,6 +29,16 @@ pipeline {
         junit '**/test-results.xml' 
       }
     }
+      stage('Lint') {
+
+steps { // add a reporter that creates JUnit XML reports
+
+sh 'ng lint'
+
+}
+
+}
+
  
  stage('Build') { 
     steps { 
