@@ -55,8 +55,7 @@ pipeline {
             deployTool: 'cf_native'
             cloudFoundryDeploy(
                     script: this,
-                    cloudFoundry: [apiEndpoint: 'https://api.cf.us10.hana.ondemand.com/', appName: 'angularProject', manifest: './manifest.yml', org: 'test7-angular
-', space: 'dev', credentialsId: 'tesnim']
+                    cloudFoundry: [apiEndpoint: 'https://api.cf.us10.hana.ondemand.com/', appName: 'angularProject', manifest: './manifest.yml', org: '9648b7fatrial', space: 'dev', credentialsId: 'tesnim']
                       )
                     }
  
