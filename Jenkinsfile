@@ -12,53 +12,5 @@ pipeline {
                checkout scm 
           } 
        } 
-   stages { 
-       stage('NPM Install') { 
-          steps { 
-               sh 'npm install' 
-          } 
-       } 
- 
- stage('Test') { 
-    steps { 
-         script { 
-         withEnv(["CHROME_BIN=/usr/bin/chromium-browser"]) { 
-            sh 'ng test --progress=false --watch false' 
-          } 
-       }
-        junit '**/test-results.xml' 
-      }
-    }
-      stage('Lint') {
-
-steps { // add a reporter that creates JUnit XML reports
-
-sh 'ng lint'
-
-}
-
-}
-
- 
- stage('Build') { 
-    steps { 
-            sh 'ng build --prod --aot --sm --progress=false' 
-          } 
-       }
- stage('Archive') { 
- agent none 
-    steps { 
-           sh 'tar -cvzf dist.tar.gz --strip-components=1 dist' 
-           archive 'dist.tar.gz' 
-          } 
-       } 
-
- stage('Deploy') {
- agent none 
-    steps { 
-    echo "Deploying..." 
-       }
- }
    }
-   }
- 
+}
