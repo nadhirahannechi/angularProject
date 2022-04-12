@@ -50,6 +50,15 @@ pipeline {
     } 
    } 
    } 
+ stage('Deploy Stage') {
+            deployType: 'standard'
+            deployTool: 'cf_native'
+            cloudFoundryDeploy(
+                    script: this,
+                    cloudFoundry: [apiEndpoint: 'https://api.cf.us10.hana.ondemand.com/', appName: 'angularProject', manifest: './manifest.yml', org: 'test7-angular
+', space: 'dev', credentialsId: 'tesnim']
+                      )
+                    }
  
  stage('Deploy') {
  agent none 
