@@ -51,6 +51,7 @@ pipeline {
    } 
    } 
  stage('Deploy Stage') {
+    steps {
             cloudFoundryDeploy(
                     script: this,
                     deployType: 'standard',
@@ -58,6 +59,7 @@ pipeline {
                     cloudFoundry: [apiEndpoint: 'https://api.cf.us10.hana.ondemand.com/', appName: 'angularProject', manifest: './manifest.yml', org: '9648b7fatrial', space: 'dev', credentialsId: 'tesnim']
                       )
                     }
+          }
  
  stage('Deploy') {
  agent none 
