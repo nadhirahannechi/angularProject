@@ -53,8 +53,6 @@ pipeline {
 
     stage('Deploy Stage') {
        steps{
-           deployType: 'standard'\n" +
-                    "      deployTool: 'cf_native'
       cloudFoundryDeploy(
          script: this,
          deployType: 'standard',
