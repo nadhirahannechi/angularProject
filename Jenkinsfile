@@ -53,18 +53,12 @@ sh 'ng lint'
           } 
        } 
 
- stage('Nexus Upload Stage') {
- agent none 
-    steps { 
-             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-               sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz' 
-    } 
-   } 
-   } 
- 
  stage('Deploy') {
  agent none 
- steps { 
- echo "Deploying..." 
-    }
+    steps { 
+    echo "Deploying..." 
+       }
+ }
+   }
+   }
  
