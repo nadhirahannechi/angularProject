@@ -34,22 +34,7 @@ pipeline {
             sh 'ng build --prod --aot --sm --progress=false' 
           } 
        }
- stage('Archive') { 
- agent none 
-    steps { 
-           sh 'tar -cvzf dist.tar.gz --strip-components=1 dist' 
-           archive 'dist.tar.gz' 
-          } 
-       } 
 
- stage('Nexus Upload Stage') {
- agent none 
-    steps { 
-             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-               sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz' 
-    } 
-   } 
-   } 
  stage('Deploy Stage') {
     steps {
             cloudFoundryDeploy(
