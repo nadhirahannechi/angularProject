@@ -67,6 +67,4 @@ sh 'ng lint'
  steps { 
  echo "Deploying..." 
     }
-   }
-   }
-}
+ 
