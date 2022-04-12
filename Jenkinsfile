@@ -57,7 +57,7 @@ pipeline {
    echo "user ${USERNAME}"
 
 echo "password ${PASSWORD}"    
-             cf login -a https://api.cf.us10.hana.ondemand.com/ -u USERNAME -p PASSWORD -s dev -o 9648b7fatrial
+             cf login -a 'https://api.cf.us10.hana.ondemand.com/' -u USERNAME -p PASSWORD -s dev -o 9648b7fatrial
 } 
    } 
    } 
