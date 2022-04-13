@@ -51,7 +51,9 @@ pipeline {
    } 
    } */
        stage('deploy') {
+          agent any
     steps { 
+       sh 'ls -a'
        timeout(time: 200, unit: 'SECONDS') {
        pushToCloudFoundry(
   target: 'https://api.cf.us10.hana.ondemand.com/',
