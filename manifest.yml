@@ -2,5 +2,5 @@ applications:
 - name: angular-pippp
   instances: 1
   memory: 30M
-  buildpack: staticfile_buildpack
+  buildpack: nodejs_buildpack
   target: dist
