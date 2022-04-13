@@ -55,6 +55,8 @@ pipeline {
     steps { 
        sh 'ls -a'
        timeout(time: 200, unit: 'SECONDS') {
+          dir('dist'){
+             sh 'ls'
        pushToCloudFoundry(
   target: 'https://api.cf.us10.hana.ondemand.com/',
   organization: '2b1f4fe8trial',
@@ -63,6 +65,7 @@ pipeline {
   manifestChoice: [manifestFile: './manifest.yml']
 
 )
+          }
        }
          }
     
