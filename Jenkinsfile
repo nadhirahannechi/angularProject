@@ -51,7 +51,6 @@ pipeline {
    } 
    } */
        stage('deploy') {
-          agent any
     steps { 
        sh 'ls -a'
        timeout(time: 200, unit: 'SECONDS') {
