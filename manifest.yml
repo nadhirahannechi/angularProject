@@ -2,5 +2,5 @@ applications:
 - name: angular-pippp
   instances: 1
   memory: 30M
-  buildpack: nodejs_buildpack
+  buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
   target: dist
