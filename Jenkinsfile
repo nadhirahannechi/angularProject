@@ -1,7 +1,7 @@
 pipeline { 
    agent { 
        docker { 
-           image 'trion/ng-cli-karma:1.2.1' 
+           image 'alexsuch/angular-cli' 
        } 
    } 
    stages { 
