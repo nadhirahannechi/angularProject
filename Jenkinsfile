@@ -62,11 +62,10 @@ pipeline {
                organization: '2b1f4fe8trial',
                cloudSpace: 'dev',
                 credentialsId: '6257c8dd04435b70edfbddd1',
-               )
-        }
-      }
-    }
+                            )
+                       }
+     }
+   }
    }
   }
-}
    
