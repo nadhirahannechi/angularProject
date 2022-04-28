@@ -1,3 +1,4 @@
+def time=$(date)
 pipeline { 
    agent { 
        docker { 
@@ -15,6 +16,7 @@ pipeline {
        } 
        stage('NPM Install') { 
           steps { 
+             sh 'echo "${time}'
                sh 'npm install' 
           } 
        } 
