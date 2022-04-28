@@ -56,7 +56,7 @@ steps{
      steps { 
         sh 'echo "BUILD_DATE=$(date +%F-%T)"'
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-               sh "curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/dofan/${BUILD_DATE}/dist.tar.gz" 
+               sh "curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/dofan/${(date +%F-%T)}/dist.tar.gz" 
            } 
        } 
    } 
