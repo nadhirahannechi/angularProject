@@ -19,6 +19,8 @@ script {
   DATE_TAG = java.time.LocalDate.now()
   DATETIME_TAG = java.time.LocalDateTime.now()
 }
+             sh "echo ${DATE_TAG}"
+
 sh "echo ${DATETIME_TAG}"
              sh 'npm install' 
           } 
