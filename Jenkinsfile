@@ -16,8 +16,12 @@ pipeline {
        } 
        stage('NPM Install') { 
           steps { 
-             sh 'echo "${time}'
-               sh 'npm install' 
+script {
+  DATE_TAG = java.time.LocalDate.now()
+  DATETIME_TAG = java.time.LocalDateTime.now()
+}
+sh "echo ${DATETIME_TAG}"
+             sh 'npm install' 
           } 
        } 
  
