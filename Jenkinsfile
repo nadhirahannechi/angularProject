@@ -63,7 +63,7 @@ steps{
      agent none 
      steps { 
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-               sh "curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/dofan/release-${DATE_TAG}/dist.tar.gz" 
+               sh "curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/web/com/focuscorp/dofan/release-${DATE_TAG}/dist.tar.gz" 
            } 
        } 
    } 
