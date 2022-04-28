@@ -15,13 +15,6 @@ pipeline {
        } 
        stage('NPM Install') { 
           steps { 
-script {
-  DATE_TAG = java.time.LocalDate.now()
-  DATETIME_TAG = java.time.LocalDateTime.now()
-}
-             sh "echo ${DATE_TAG}"
-
-sh "echo ${DATETIME_TAG}"
              sh 'npm install' 
           } 
        } 
@@ -58,15 +51,14 @@ steps{
            archive 'dist.tar.gz' 
           } 
        } 
-
-   stage('Nexus Upload Stage') {
-     agent none 
-     steps { 
-        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-               sh "curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/dofan/dist.tar.gz" 
-           } 
-       } 
-   } 
+stage('Nexus Upload Stage') {
+                  agent none
+                    steps {
+                            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                                   sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/dist.tar.gz'
+                             }
+                          }
+                }
 
     stage('Deploy Stage') {
       steps { 
