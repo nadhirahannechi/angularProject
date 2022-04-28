@@ -5,7 +5,7 @@ pipeline {
        } 
    } 
    environment {
-      BUILD_DATE=$(date +%F-%T)
+      BUILD_DATE=$(date)
    }
    stages { 
        stage('Checkout') { 
