@@ -57,10 +57,11 @@ stage('Nexus Upload Stage') {
                        script {
   DATE_TAG = java.time.LocalDate.now()
   DATETIME_TAG = java.time.LocalDateTime.now()
-                          NAME="release"+ "-"+$(DATE_TAG)
+                          NAME="release"
+                          VERSION=${NAME}-${DATE_TAG}
 }
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                                   sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/${NAME}/dist.tar.gz'
+                                   sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/${VERSION}/dist.tar.gz'
                              }
                           }
                 }
