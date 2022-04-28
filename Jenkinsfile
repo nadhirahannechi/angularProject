@@ -1,4 +1,3 @@
-def time=$(date)
 pipeline { 
    agent { 
        docker { 
