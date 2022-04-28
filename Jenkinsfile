@@ -4,6 +4,9 @@ pipeline {
            image 'trion/ng-cli-karma:1.2.1' 
        } 
    } 
+   environment {
+      BUILD_DATE=$(date +%F-%T)
+   }
    stages { 
        stage('Checkout') { 
          agent any 
@@ -54,9 +57,9 @@ steps{
    stage('Nexus Upload Stage') {
      agent none 
      steps { 
-        sh 'echo "BUILD_DATE=$(date +%F-%T)"'
+        sh 'echo "BUILD_DATE"'
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-               sh "curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/dofan/${(date +%F-%T)}/dist.tar.gz" 
+               sh "curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/dofan/${env.BUILD_DATE}/dist.tar.gz" 
            } 
        } 
    } 
