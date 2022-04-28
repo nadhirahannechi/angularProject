@@ -67,12 +67,7 @@ steps{
           dir('dist') {
           sh 'ls' 
           sh 'cp ../manifest.yml manifest.yml'
-          pushToCloudFoundry(
-              target: 'https://api.cf.us10.hana.ondemand.com/',
-               organization: '2b1f4fe8trial',
-               cloudSpace: 'dev',
-                credentialsId: 'nadhira',
-               )
+      
         }
       }
     }
