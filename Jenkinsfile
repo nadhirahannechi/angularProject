@@ -1,6 +1,4 @@
 
-def now = new Date()
-def filename = now.format("backup-$BUILD_NUMBER-yyyyMMddHHmm")
 pipeline { 
    agent { 
        docker { 
@@ -57,6 +55,11 @@ steps{
 stage('Nexus Upload Stage') {
                   agent none
                     steps {
+                       script{
+                          
+def now = new Date()
+def filename = now.format("backup-$BUILD_NUMBER-yyyyMMddHHmm")
+                       }
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                                    sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/release/${filename}/dist.tar.gz'
                              }
