@@ -57,7 +57,7 @@ stage('Nexus Upload Stage') {
                     steps {
 
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_manvenuser',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                                   sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/release/dist-$BUILD_TIMESTAMP%.tar.gz'
+                                   sh 'curl -v -u ${USERNAME}:${PASSWORD} --upload-file dist.tar.gz http://artefact.focus.com.tn:8081/repository/webbuild/com/focuscorp/release/dist-$BUILD_TIMESTAMP.tar.gz'
                              }
                           
                     }
