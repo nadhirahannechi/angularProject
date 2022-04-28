@@ -16,8 +16,8 @@ pipeline {
        } 
        stage('NPM Install') { 
           steps { 
+                          sh ' echo $BUILD_ID'
              sh 'npm install' 
-             sh ' echo $BUILD_TIMESTAMP'
           } 
        } 
  
