@@ -5,11 +5,15 @@ pipeline {
            image 'trion/ng-cli-karma:1.2.1' 
        } 
    } 
+    environment {
+        def BUILDVERSION = sh(script: "echo `date +%s`", returnStdout: true).trim()
+    }
 
    stages { 
        stage('Checkout') { 
          agent any 
           steps { 
+                             echo "Current build version :: $BUILDVERSION"
                deleteDir() 
                checkout scm 
           } 
