@@ -28,7 +28,7 @@ mavenBuild:
 
 nexusUpload:
   script: this
-  url: http://artefact.focus.com.tn:8081/repository/webbuild
+  url: http://artefact.focus.com.tn:8081
   nexus:
     nexusCredentialsId: 'nexus_manvenuser'
 
