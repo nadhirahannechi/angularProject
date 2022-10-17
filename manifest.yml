@@ -1,6 +1,6 @@
 ---
 applications:
-- name: Test9
+- name: pfe-angular
   buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
   instance: 1
   memory: 30M
