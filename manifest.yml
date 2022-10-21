@@ -1,0 +1,7 @@
+---
+applications:
+- name: soutennace-technique
+  buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
+  instance: 1
+  memory: 30M
+
