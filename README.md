@@ -1,3 +1,38 @@
 # Docker + Jenkinsfile demo
 
 Example project to demonstrate the usage of Docker and Jenkins for building, testing and delivery of Angular applications.
+import requests
+
+# Informations d'authentification pour le GitLab source
+source_gitlab_url = "https://source-gitlab.com"
+source_private_token = "YOUR_SOURCE_PRIVATE_TOKEN"
+
+# Informations d'authentification pour le GitLab de destination
+destination_gitlab_url = "https://destination-gitlab.com"
+destination_private_token = "YOUR_DESTINATION_PRIVATE_TOKEN"
+
+# Fonction pour récupérer la liste des projets du GitLab source
+def get_projects():
+    headers = {"PRIVATE-TOKEN": source_private_token}
+    response = requests.get(f"{source_gitlab_url}/api/v4/projects", headers=headers)
+    projects = response.json()
+    return projects
+
+# Fonction pour créer un projet sur le GitLab de destination
+def create_project(name, description):
+    headers = {"PRIVATE-TOKEN": destination_private_token}
+    data = {"name": name, "description": description}
+    response = requests.post(f"{destination_gitlab_url}/api/v4/projects", headers=headers, data=data)
+    return response.status_code == 201
+
+# Récupérer la liste des projets du GitLab source
+projects = get_projects()
+
+# Parcourir la liste des projets et les créer sur le GitLab de destination
+for project in projects:
+    name = project["name"]
+    description = project["description"]
+    if create_project(name, description):
+        print(f"Le projet '{name}' a été migré avec succès.")
+    else:
+        print(f"Échec de la migration du projet '{name}'.")
