@@ -1,0 +1,13 @@
+stages:
+  - test
+
+test_all_products:
+  stage: test
+  script:
+    - for file in test_data/*.yml; do
+        echo "Lancement du test avec $file"
+        curl -X POST "$AAP_URL/api/v2/job_templates/22788/launch/" \
+          -H "Authorization: Bearer $AAP_TOKEN" \
+          -H "Content-Type: application/json" \
+          --data-binary "@$file";
+      done
