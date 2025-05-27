@@ -1,0 +1,14 @@
+- name: Lister les utilisateurs DBCLI
+  command: >
+    dbcli database users list --sid {{ db_sid }}
+  register: user_check
+
+- name: Vérifier si l'utilisateur existe déjà
+  set_fact:
+    user_exists: "{{ user_check.stdout | from_json | selectattr('userName', 'equalto', db_user) | list | length > 0 }}"
+  when: user_check.rc == 0
+
+- name: Créer l'utilisateur s'il n'existe pas
+  command: >
+    dbcli database users create --sid {{ db_sid }} --user {{ db_user }}
+  when: not user_exists
