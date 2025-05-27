@@ -1,0 +1,43 @@
+stages:
+  - prepare
+  - validate
+  - plan
+  - test
+  - report
+
+variables:
+  AAP_URL: "https://ton-aap.exemple.com"
+  AAP_TOKEN: "ton_token_api"
+
+prepare_env:
+  stage: prepare
+  script:
+    - echo "📦 Installation des outils"
+    - apt-get update && apt-get install -y jq curl
+
+validate_files:
+  stage: validate
+  script:
+    - bash scripts/validate_json.sh
+
+plan_execution:
+  stage: plan
+  script:
+    - echo "🧠 Planning de l'exécution"
+    - ls test_data/*.json
+
+launch_tests:
+  stage: test
+  script:
+    - bash scripts/launch_job.sh
+  artifacts:
+    paths:
+      - job_results/
+
+generate_report:
+  stage: report
+  script:
+    - bash scripts/generate_report.sh
+  artifacts:
+    paths:
+      - job_results/report.md
