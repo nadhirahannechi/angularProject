@@ -1,0 +1,8 @@
+Dans le cadre de notre framework Request Automation, l’ajout de nouveaux produits nécessitait jusqu’ici des modifications manuelles fastidieuses pour tester leur bon fonctionnement, notamment au niveau des variables et du déclenchement des jobs Ansible. Cela entraînait une perte de temps, des risques d’erreurs, et limitait fortement notre capacité à industrialiser les validations. Pour répondre à cette problématique, nous avons intégré GitLab CI afin d’automatiser l’exécution des tests unitaires. À chaque nouveau commit, les fichiers du produit sont analysés, leurs contenus JSON utilisés comme extra_vars, puis les Job Templates AAP sont lancés dynamiquement. Cette automatisation élimine les manipulations humaines, garantit des tests reproductibles, accélère les cycles de validation, et renforce la fiabilité globale du framework. C’est une étape essentielle vers un processus plus robuste, évolutif et aligné avec les bonnes pratiques DevOps.
+	•	Pipeline CI construit autour de 5 étapes :
+	•	🛠️ prepare → Installation des outils
+	•	✅ validate → Vérification des fichiers produits
+	•	🧠 plan → Listing des tests à lancer
+	•	🚀 test → Déclenchement automatique des Job Templates
+	•	📊 report → Génération de rapports d’exécution
+	•	Utilisation des fichiers .json pour injecter dynamiquement les extra_vars
