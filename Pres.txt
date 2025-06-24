@@ -1,0 +1,23 @@
+Dans cette deuxième partie, je vous ai présenté le nouveau processus automatisé que nous avons mis en place.
+
+Désormais, dès qu’un développeur pousse son code sur le dépôt Git, une pipeline GitLab CI/CD se déclenche automatiquement.
+Elle exécute d’abord les tests de non-régression sur l’environnement de développement (DEV),
+puis lance des tests avec l’outil Molecule afin de valider :
+	•	le bon fonctionnement du code via des tests unitaires,
+	•	ainsi que le bon comportement global des rôles Ansible grâce à des tests d’intégration.
+
+Si tous les tests sont concluants, une merge request est automatiquement créée vers la branche préprod.
+Une nouvelle pipeline s’exécute alors, avec les mêmes étapes de validation :
+	•	tests de non-régression,
+	•	tests unitaires et d’intégration avec Molecule.
+
+Une fois la pipeline validée, l’intégrateur peut lancer manuellement la mise en production.
+
+En cas d’erreur, le développeur est immédiatement notifié, ce qui permet de corriger rapidement sans attendre de retours manuels.
+
+👉 Grâce à cette automatisation, nous avons :
+	•	fiabilisé nos tests,
+	•	réduit les erreurs humaines,
+	•	et considérablement accéléré le cycle de correction d’incidents.
+
+Ce processus nous permet d’aller plus vite, avec plus de sécurité, et moins d’efforts manuels.
