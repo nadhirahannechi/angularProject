@@ -1,0 +1,64 @@
+---
+- name: Extraire la version CLI installée depuis df
+  shell: "df -h | grep cli | awk '{print $NF}' | grep -oP '[0-9]{5}'"
+  register: version_cli
+  changed_when: false
+  ignore_errors: true
+
+- name: Déduire s'il y a correspondance avec la version demandée
+  set_fact:
+    cli_match: "{{ version_cli.stdout is defined and version_cli.stdout.startswith(demandeur_version) }}"
+    version_installee: "{{ version_cli.stdout | default('') }}"
+
+- name: Aucune version CLI installée
+  when: version_installee == ""
+  debug:
+    msg: "Aucune version Oracle CLI détectée sur le système."
+
+- name: Aucune correspondance avec la version demandée
+  when: version_installee != "" and not cli_match
+  debug:
+    msg: "Version demandée : {{ demandeur_version }} - Version installée : {{ version_installee }}. Pas de désinstallation nécessaire."
+---
+- name: Créer le répertoire temporaire
+  file:
+    path: "{{ oracle_cli_tmp_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Télécharger l'archive Oracle CLI
+  get_url:
+    url: "{{ oracle_cli_tar_url }}"
+    dest: "{{ oracle_cli_tmp_path }}/oracle_cli.tar.gz"
+    mode: '0644'
+
+- name: Extraire l'archive
+  unarchive:
+    src: "{{ oracle_cli_tmp_path }}/oracle_cli.tar.gz"
+    dest: "{{ oracle_cli_tmp_path }}"
+    remote_src: yes
+---
+- name: Lancer le script de désinstallation Oracle CLI
+  shell: |
+    cd {{ oracle_cli_tmp_path }}
+    ./srv_client.ksh remove -v {{ demandeur_version }}
+  register: uninstall_result
+
+- name: Vérifier le code retour
+  debug:
+    msg: "Résultat script : {{ uninstall_result.rc }} - stdout : {{ uninstall_result.stdout }}"
+
+- name: Vérifier si encore des volumes CLI après désinstallation
+  shell: "df -h | grep cli"
+  register: post_check
+  changed_when: false
+
+- name: Vérification finale
+  when: post_check.stdout == ""
+  debug:
+    msg: "Désinstallation réussie. Aucun volume CLI détecté."
+
+- name: Échec de désinstallation
+  when: post_check.stdout != ""
+  fail:
+    msg: "Échec : des volumes CLI sont toujours montés après désinstallation."
