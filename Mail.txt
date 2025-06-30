@@ -1,0 +1,13 @@
+Bonjour,
+
+Suite à votre demande ServiceNow n° {{ sn_request_id }}, l'utilisateur Oracle suivant a été créé avec succès :
+
+- **Nom d'utilisateur :** {{ username }}
+- **Mot de passe :** {{ mot_de_passe }}
+- **Instance Oracle :** {{ sid }}
+
+Merci de ne pas répondre à ce message.  
+Pour toute question complémentaire, merci de passer par le canal habituel via ServiceNow.
+
+Cordialement,  
+L'équipe DBA Automation
