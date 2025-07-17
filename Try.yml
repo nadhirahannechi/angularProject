@@ -1,0 +1,9 @@
+- name: Set dynamic roles path
+  set_fact:
+    orchestrateur_roles_path: "{{ role_path }}/roles"
+
+- name: Appel du rôle install_mq
+  include_role:
+    name: install_mq
+  vars:
+    ansible_roles_path: "{{ orchestrateur_roles_path }}"
