@@ -1,0 +1,74 @@
+---
+- name: Check if PGP is already installed
+  stat:
+    path: "{{ pgp_install_dir }}/bin/pgp"
+  register: pgp_binary
+  tags: [pgp]
+
+- name: Check PGP version if binary exists
+  command: "{{ pgp_install_dir }}/bin/pgp --version"
+  register: pgp_version_check
+  when: pgp_binary.stat.exists
+  failed_when: false
+  changed_when: false
+  tags: [pgp]
+
+- name: Skip role if PGP is already installed
+  debug:
+    msg: "PGP is already installed. Skipping installation."
+  when: pgp_binary.stat.exists and '"PGP Command Line" in pgp_version_check.stdout'
+  tags: [pgp]
+  notify: skip_pgp_install
+
+- name: End play if PGP already installed
+  meta: end_task
+  when: pgp_binary.stat.exists and '"PGP Command Line" in pgp_version_check.stdout'
+  tags: [pgp]
+
+# Les tâches ci-dessous ne s'exécutent que si PGP n'est pas installé
+- name: Create installation directory
+  file:
+    path: "{{ pgp_install_dir }}"
+    state: directory
+    mode: '0755'
+  tags: [pgp]
+
+- name: Download PGP package from Artifactory
+  get_url:
+    url: "{{ pgp_artifactory_url }}/{{ pgp_package_name }}"
+    dest: "/tmp/{{ pgp_package_name }}"
+    mode: '0644'
+  tags: [pgp]
+
+- name: Install PGP package
+  yum:
+    name: "/tmp/{{ pgp_package_name }}"
+    state: present
+  tags: [pgp]
+
+- name: Check installed PGP version
+  command: "{{ pgp_install_dir }}/bin/pgp --version"
+  register: pgp_version
+  changed_when: false
+  tags: [pgp]
+
+- name: Display PGP version
+  debug:
+    var: pgp_version.stdout_lines
+  tags: [pgp]
+
+  ---
+# Nom du package RPM à installer
+pgp_package_name: "PGPCommandLine-10.3.2.12260-12260.linux.x86_64.rpm"
+
+# Répertoire d’installation final du logiciel PGP
+pgp_install_dir: "/opt/pgp"
+
+# URL Artifactory de base (sans le nom du fichier)
+pgp_artifactory_url: "https://artifactory.mondomaine.com/pgp"
+
+# Répertoire temporaire où l’on télécharge le RPM
+pgp_temp_dir: "/tmp"
+
+# Forcer l’installation même si PGP est détecté (si tu veux un override)
+pgp_force_install: false
