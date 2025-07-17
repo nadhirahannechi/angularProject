@@ -1,0 +1,17 @@
+- name: Générer le corps de l'e-mail à partir d'un template
+  template:
+    src: templates/email_user.j2
+    dest: /tmp/email_body.txt
+
+- name: Envoyer un mail avec le contenu généré
+  mail:
+    host: "smtp-appli-ema.staging.echonet.net.intra"
+    port: 25
+    username: "{{ my_user }}"
+    password: "{{ my_pass }}"
+    to: "{{ requester_email }}"
+    from: "{{ my_user }}"
+    subject: "Création utilisateur Oracle - Demande ServiceNow {{ sn_request_id }}"
+    body: "{{ lookup('file', '/tmp/email_body.txt') }}"
+    secure: starttls
+  delegate_to: localhost
