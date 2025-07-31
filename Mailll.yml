@@ -1,0 +1,87 @@
+---
+- block:
+    - name: Vérifier que dbcli est installé
+      command: which dbcli
+      register: dbcli_check
+      failed_when: dbcli_check.rc != 0
+      changed_when: false
+      tags: [prereq, dbcli]
+
+  rescue:
+    - name: Arrêter si dbcli absent
+      fail:
+        msg: "❌ ERREUR : dbcli n’est pas installé sur l’hôte."
+      tags: [prereq, dbcli]
+
+- block:
+    - name: Vérifier si l’utilisateur Oracle existe déjà
+      command: "dbcli database users list --sid {{ sid }} --user {{ username }}"
+      register: user_check
+      changed_when: false
+      tags: [oracle, check]
+
+    - name: Créer l’utilisateur Oracle s’il n’existe pas
+      command: "dbcli database users create --sid {{ sid }} --user {{ username }}"
+      register: user_create_output
+      when: user_check.stdout == "[]"
+      tags: [oracle, create]
+
+    - name: Debug création utilisateur
+      debug:
+        msg: "✅ Utilisateur {{ username }} créé dans l’instance {{ sid }}"
+      when: user_check.stdout == "[]"
+      tags: [oracle, create]
+
+  rescue:
+    - name: Afficher erreur de création
+      debug:
+        msg: "❌ Erreur lors de la création de l’utilisateur {{ username }}"
+      tags: [oracle, error]
+
+- block:
+    - name: Extraire le mot de passe depuis la sortie JSON
+      set_fact:
+        user_password: "{{ (user_create_output.stdout | from_json).actions[0].actionDetails.password }}"
+      when: user_check.stdout == "[]"
+      tags: [oracle, password]
+
+- block:
+    - name: Vérifier si le mail a déjà été envoyé
+      stat:
+        path: "{{ mail_flag_file }}"
+      register: mail_flag
+      tags: [mail, check]
+
+    - name: Générer le corps du mail à partir du template
+      template:
+        src: email_user.j2
+        dest: /tmp/email_body.txt
+      delegate_to: localhost
+      when: user_check.stdout == "[]" and not mail_flag.stat.exists
+      tags: [mail, template]
+
+    - name: Envoyer un mail avec le contenu généré
+      mail:
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
+        username: "{{ smtp_user }}"
+        password: "{{ smtp_pass }}"
+        to: "{{ requester_email }}"
+        subject: "Création utilisateur Oracle - Demande ServiceNow {{ sn_request_id }}"
+        body: "{{ lookup('file', '/tmp/email_body.txt') }}"
+      delegate_to: localhost
+      when: user_check.stdout == "[]" and not mail_flag.stat.exists
+      tags: [mail, send]
+
+    - name: Créer un flag local après envoi du mail
+      file:
+        path: "{{ mail_flag_file }}"
+        state: touch
+      when: user_check.stdout == "[]" and not mail_flag.stat.exists
+      tags: [mail, flag]
+
+  rescue:
+    - name: Alerte si envoi mail échoué
+      debug:
+        msg: "⚠️ L’email n’a pas pu être envoyé. Il sera retenté au prochain run."
+      tags: [mail, error]
