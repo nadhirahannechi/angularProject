@@ -1,0 +1,71 @@
+---
+- name: "Vérifier si dbcli est installé"
+  command: "which dbcli"
+  register: dbcli_check
+  failed_when: false
+  changed_when: false
+  tags: [check, dbcli]
+
+- name: "Échec si dbcli n'est pas installé"
+  fail:
+    msg: "dbcli n'est pas installé sur ce serveur. Impossible de changer le mot de passe."
+  when: dbcli_check.rc != 0
+  tags: [error, dbcli]
+
+- name: "Vérifier si l'utilisateur {{ username }} existe"
+  command: "dbcli list-users | grep -w {{ username }}"
+  register: user_check
+  failed_when: false
+  changed_when: false
+  tags: [check, user]
+
+- name: "Échec si l'utilisateur n'existe pas"
+  fail:
+    msg: "Utilisateur {{ username }} introuvable dans dbcli. Impossible de changer le mot de passe."
+  when: user_check.rc != 0
+  tags: [error, user]
+
+- name: "Changer le mot de passe avec dbcli"
+  block:
+    - name: "Exécuter la commande de changement de mot de passe"
+      command: "dbcli change-password {{ username }}"
+      register: change_pwd_result
+      changed_when: "'Password updated' in change_pwd_result.stdout"
+      failed_when: change_pwd_result.rc != 0
+      tags: [change, password]
+
+    - name: "Extraire le nouveau mot de passe du JSON"
+      set_fact:
+        all_passwords: >-
+          {{ change_pwd_result.stdout | from_json
+             | json_query('Actions[].actions[].actionDetails.password') }}
+      tags: [extract, password]
+
+    - name: "Définir la variable du mot de passe"
+      set_fact:
+        user_password: "{{ all_passwords | last }}"
+      when: all_passwords | length > 0
+      tags: [extract, password]
+
+    - name: "Envoyer un mail au demandeur ServiceNow"
+      mail:
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
+        to: "{{ demandeur_email }}"
+        subject: "Changement de mot de passe - Demande {{ request_id }}"
+        body: |
+          Bonjour,
+
+          Le mot de passe de l’utilisateur **{{ username }}** a été changé avec succès.
+          Voici le nouveau mot de passe : {{ user_password }}
+
+          Merci,
+          L'équipe d'automatisation
+      when: user_password is defined
+      tags: [mail, notify]
+
+  rescue:
+    - name: "Notifier échec du changement de mot de passe"
+      debug:
+        msg: "Le changement de mot de passe a échoué pour l’utilisateur {{ username }} (Demande {{ request_id }})"
+      tags: [error, password]
