@@ -1,0 +1,43 @@
+---
+- name: Vérifier si dbcli est installé
+  command: "which dbcli"
+  register: dbcli_check
+  failed_when: dbcli_check.rc != 0
+  changed_when: false
+  tags: [check, dbcli]
+
+- block:
+    - name: Vérifier si l'utilisateur {{ username }} existe
+      command: "dbcli list-users | grep -w {{ username }}"
+      register: user_check
+      failed_when: false
+      changed_when: false
+
+    - name: Supprimer l’utilisateur si présent
+      command: "dbcli drop-user {{ username }}"
+      when: user_check.rc == 0
+      register: drop_result
+      changed_when: true
+
+    - name: Vérifier après suppression que l’utilisateur n’existe plus
+      command: "dbcli list-users | grep -w {{ username }}"
+      register: post_check
+      failed_when: false
+      changed_when: false
+      when: user_check.rc == 0
+
+    - name: Confirmation suppression
+      debug:
+        msg: "✅ Utilisateur {{ username }} supprimé avec succès."
+      when: user_check.rc == 0 and post_check.rc != 0
+
+    - name: Échec suppression (utilisateur toujours présent)
+      fail:
+        msg: "❌ Échec de la suppression : l’utilisateur {{ username }} est encore listé."
+      when: user_check.rc == 0 and post_check.rc == 0
+
+    - name: Message si l’utilisateur n’existe pas
+      debug:
+        msg: "ℹ️ Utilisateur {{ username }} n’existe pas, aucune action effectuée."
+      when: user_check.rc != 0
+  tags: [drop, user]
