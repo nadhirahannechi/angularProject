@@ -1,0 +1,92 @@
+- name: Launch Inventory Builder job
+  uri:
+    url: "{{ aap_url }}/api/v2/job_templates/{{ inv_builder_template_id }}/launch/"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ aap_token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      extra_vars:
+        env: "{{ env }}"
+        host: "{{ host_name }}"
+  register: inv_builder_launch
+
+- name: Wait for inventory builder job to finish
+  uri:
+    url: "{{ inv_builder_launch.json.url }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ aap_token }}"
+      Content-Type: "application/json"
+  register: job_status
+  until: job_status.json.status in ['successful', 'failed']
+  retries: 30
+  delay: 10
+
+- name: Fail if job failed
+  fail:
+    msg: "Inventory builder job failed!"
+  when: job_status.json.status != 'successful'
+
+- name: Get inventory ID created by builder
+  uri:
+    url: "{{ aap_url }}/api/v2/inventories/?name=invrtm_{{ env }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ aap_token }}"
+      Content-Type: "application/json"
+    return_content: true
+  register: inventory_lookup
+
+- name: Set inventory_id
+  set_fact:
+    inventory_id: "{{ inventory_lookup.json.results[0].id }}"
+
+- name: Set credential ID based on environment
+  set_fact:
+    credential_id: "{{ environments[env].credential_id }}"
+
+- name: Launch product job template
+  uri:
+    url: "{{ aap_url }}/api/v2/job_templates/{{ product_job_template_id }}/launch/"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ aap_token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      inventory: "{{ inventory_id }}"
+      credentials: [{{ credential_id }}]
+      extra_vars:
+        env: "{{ env }}"
+        host: "{{ host_name }}"
+  register: product_job_resul
+- name: Load roles to credentials mapping
+  vars_files:
+    - vars/roles_credentials.yml
+
+- name: Set credential ID for env
+  set_fact:
+    credential_id: "{{ environments[env].credential_id }}"
+
+- name: Set full credential list for role
+  set_fact:
+    full_credential_list: "{{ roles_credentials[role] + [credential_id] }}"
+
+- name: Launch product job template with dynamic credentials
+  uri:
+    url: "{{ aap_url }}/api/v2/job_templates/{{ product_job_template_id }}/launch/"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ aap_token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      inventory: "{{ inventory_id }}"
+      credentials: "{{ full_credential_list }}"
+      extra_vars:
+        env: "{{ env }}"
+        host: "{{ host_name }}"
+        role: "{{ role }}"
+  register: product_job_result
